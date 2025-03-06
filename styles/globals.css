@@ -20,3 +20,47 @@ body {
   background: #000;
   font: #FFF;
 }
+
+@font-face {
+  font-family: 'open';
+  src: url('/fonts/open.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@keyframes rotateAndZoom {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(3deg) scale(1.05);
+  }
+}
+
+.bgAnimated {
+  animation: rotateAndZoom 10s infinite alternate ease-in-out;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animated {
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+}
+
+
+.open-font {
+  font-family: 'open', sans-serif;
+}
+
+/* Removing blob animations since they're no longer used */

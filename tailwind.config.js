@@ -8,9 +8,21 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      fontFamily: {
+        custom: ['open', 'sans-serif'],
+      },
+      keyframes: {
+        zoom: {
+          '0%': { transform: 'scale(1.2)' },
+          '100%': { transform: 'scale(2)' },
+        },
+      },
+      animation: {
+        zoom: 'zoom 0.3s ease-in-out forwards',
+      },
+      colors: {
+        open: '#C2D100',
       },
     },
   },
