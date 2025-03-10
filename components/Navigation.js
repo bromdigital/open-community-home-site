@@ -7,6 +7,7 @@ import { FaBars } from 'react-icons/fa';
 const routes = [
   { name: 'Home', path: '/' },
   { name: 'Proposals', path: '/proposals' },
+  { name: 'Token Allocation', path: '/token-allocation' },
   // Add more routes as needed
 ];
 

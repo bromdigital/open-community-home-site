@@ -55,7 +55,7 @@ const engageLinks = [
 const inDevelopmentLinks = [
   {
     name: 'Token Allocation',
-    url: '#'
+    url: '/token-allocation'
   },
   {
     name: 'Dashboard',
@@ -157,17 +157,38 @@ export default function Home() {
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
             {inDevelopmentLinks.map((link, index) => (
-              <div
-                key={index}
-                className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 backdrop-blur-md relative h-24 overflow-visible group"
-              >
-                <div className="absolute inset-0 rounded-lg backdrop-hue-rotate-0 transition-all duration-300 z-0" />
-                <div className="flex flex-col items-center z-10">
-                  <span className="open-font text-open uppercase text-xl font-bold text-white/70">
+              link.url !== '#' ? (
+                <a
+                  key={index}
+                  href={link.url}
+                  target={link.url.startsWith('/') ? undefined : "_blank"}
+                  rel={link.url.startsWith('/') ? undefined : "noopener noreferrer"}
+                  className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 transition-all duration-300 ease-in-out backdrop-blur-md bg-black/40 relative h-24 overflow-visible group"
+                >
+                  <div className="absolute inset-0 rounded-lg transition-all duration-300 z-0" />
+                  <span className="open-font text-open uppercase text-xl font-bold text-white transition-transform duration-300 ease-in-out group-hover:scale-110 z-10">
                     {link.name}
                   </span>
+                  {!link.url.startsWith('/') && (
+                    <FiExternalLink 
+                      className="absolute bottom-2 right-2 text-white/50 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                  )}
+                </a>
+              ) : (
+                <div
+                  key={index}
+                  className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 backdrop-blur-md relative h-24 overflow-visible group"
+                >
+                  <div className="absolute inset-0 rounded-lg backdrop-hue-rotate-0 transition-all duration-300 z-0" />
+                  <div className="flex flex-col items-center z-10">
+                    <span className="open-font text-open uppercase text-xl font-bold text-white/70">
+                      {link.name}
+                    </span>
+                    <span className="text-white/50 text-xs mt-1 uppercase tracking-wide">Coming Soon</span>
+                  </div>
                 </div>
-              </div>
+              )
             ))}
           </div>
         </div>
