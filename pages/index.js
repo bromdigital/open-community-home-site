@@ -47,7 +47,7 @@ const engageLinks = [
     url: 'https://flooz.xyz/onopenxyz/booost',
   },
   { 
-    name: 'Proposals', 
+    name: 'DAO Proposals', 
     url: '/proposals',
   }
 ]
