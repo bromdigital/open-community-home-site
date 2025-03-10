@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { FaBars } from 'react-icons/fa';
 
 // Routes for navigation
 const routes = [
@@ -41,30 +42,14 @@ const Navigation = () => {
   
   return (
     <>
-      {/* Hamburger Button */}
-      <button 
-        id="menu-button"
-        className="fixed top-4 right-4 z-50 p-3 text-white cursor-pointer" 
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
+      {/* Hamburger Button - Hidden when modal is open */}
+      <button
+        className={`fixed right-8 bottom-8 z-50 text-black text-2xl p-4 bg-opngreen hover:bg-opnpurple rounded-md transition-all duration-300 ${
+          isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+        }`}
+        onClick={() => setIsOpen(true)}
       >
-        <div className="w-7 h-6 relative flex flex-col justify-between">
-          <span 
-            className={`block h-0.5 w-full bg-white transition-all duration-300 ${
-              isOpen ? 'rotate-45 translate-y-2.5' : ''
-            }`}
-          ></span>
-          <span 
-            className={`block h-0.5 w-full bg-white transition-all duration-300 ${
-              isOpen ? 'opacity-0' : 'opacity-100'
-            }`}
-          ></span>
-          <span 
-            className={`block h-0.5 w-full bg-white transition-all duration-300 ${
-              isOpen ? '-rotate-45 -translate-y-2.5' : ''
-            }`}
-          ></span>
-        </div>
+        <FaBars />
       </button>
       
       {/* Navigation Modal Overlay */}

@@ -109,7 +109,7 @@ const ProposalsComponent = () => {
     setModalOpen(true);
   };
 
-  // Helper function to determine border color based on proposal state
+  // Move these helper functions outside the main component
   const getBorderColorClass = (state, derivedStatus) => {
     // Use derived status if available, otherwise fall back to state
     const status = derivedStatus || state;
@@ -128,7 +128,6 @@ const ProposalsComponent = () => {
     }
   };
 
-  // Helper function to get status badge styling
   const getStatusBadge = (state, derivedStatus) => {
     // Use derived status if available, otherwise fall back to state
     const status = derivedStatus || state;
@@ -174,6 +173,14 @@ const ProposalsComponent = () => {
     );
   };
 
+  // Add this helper function to categorize proposals
+  const categorizeProposals = (proposals) => {
+    return {
+      active: proposals.filter(p => p.state === 'active'),
+      completed: proposals.filter(p => p.state !== 'active')
+    };
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -182,59 +189,70 @@ const ProposalsComponent = () => {
     );
   }
 
+  const { active, completed } = categorizeProposals(proposals);
+
   return (
     <div className="w-full mt-6 sm:mt-10">
       <h1 className='open-font text-white text-3xl sm:text-5xl uppercase mb-4 sm:mb-8'>
         DAO Proposals
       </h1>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-        {proposals.map((proposal, index) => (
-          <div 
-            key={index} 
-            className={`rounded-lg p-6 flex flex-col items-start justify-start border-2 ${getBorderColorClass(proposal.state, proposal.derivedStatus)} transition-all duration-300 ease-in-out hover:border-opacity-100 bg-black/20 backdrop-blur-xl relative overflow-hidden group`}
-          >
-            <div className="absolute top-2 right-2">
-              {getStatusBadge(proposal.state, proposal.derivedStatus)}
+      {/* Active Proposals Section */}
+      <div className="mb-12">
+        <h2 className="text-white text-2xl sm:text-3xl mb-4">Active Proposals</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          {active.length > 0 ? (
+            active.map((proposal, index) => (
+              <ProposalCard 
+                key={index} 
+                proposal={proposal} 
+                openModal={openModal}
+                getBorderColorClass={getBorderColorClass}
+                getStatusBadge={getStatusBadge}
+                truncateText={truncateText}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center text-white/80">
+              No active proposals at the moment
             </div>
-            
-            <h3 className="mb-2 text-lg text-white font-bold md:text-xl mt-4 pr-16">
-              {proposal.title}
-            </h3>
-            
-            <p className="mb-6 text-white/80 text-sm">
-              {truncateText(proposal.body, 100)}
-            </p>
-            
-            <div className="mt-auto w-full flex justify-between items-center">
-              <Link
-                href={`https://snapshot.org/#/ticketing-revolution.eth/proposal/${proposal.id}`}
-                target="_blank"
-                className="text-white hover:text-white/80 border-b border-white/40 pb-1 transition-all"
-              >
-                View on Snapshot
-              </Link>
-              
-              <button 
-                onClick={() => openModal(proposal)} 
-                className="text-white/70 hover:text-white transition-all"
-              >
-                Details
-              </button>
-            </div>
-          </div>
-        ))}
-        
-        {/* Create Proposal Tile */}
-        <div className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 transition-all duration-300 ease-in-out hover:border-white/60 bg-black/20 backdrop-blur-xl relative h-full overflow-hidden group">
+          )}
+        </div>
+      </div>
+
+      {/* Completed Proposals Section */}
+      <div>
+        <h2 className="text-white text-2xl sm:text-3xl mb-4">Completed Proposals</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          {completed.map((proposal, index) => (
+            <ProposalCard 
+              key={index} 
+              proposal={proposal} 
+              openModal={openModal}
+              getBorderColorClass={getBorderColorClass}
+              getStatusBadge={getStatusBadge}
+              truncateText={truncateText}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Create Proposal Tile */}
+      <div className="mt-12">
+        <div 
+          className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 transition-all duration-300 ease-in-out hover:border-white/60 backdrop-blur-xl relative h-full overflow-hidden group"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+        >
           <h3 className="mb-4 text-xl text-white font-bold">Create Proposal</h3>
-          <p className="mb-6 text-white/80 text-center">Start a new proposal for the community to vote on</p>
+          <p className="mb-6 text-white/80 text-center">
+            Start by discussing your proposal on our Discord community
+          </p>
           <Link
-            href="https://snapshot.org/#/ticketing-revolution.eth/create"
+            href="https://discord.gg/5zDK5FvP"
             target="_blank"
             className="mt-auto px-6 py-2 border border-white/40 hover:border-white text-white hover:bg-white/10 transition-all duration-300 rounded-lg"
           >
-            Create New Proposal
+            Join Discord Discussion
           </Link>
         </div>
       </div>
@@ -301,6 +319,51 @@ const ProposalsComponent = () => {
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// ProposalCard component can now access these functions
+const ProposalCard = ({ 
+  proposal, 
+  openModal, 
+  getBorderColorClass, 
+  getStatusBadge,
+  truncateText 
+}) => {
+  return (
+    <div 
+      className={`rounded-lg p-6 flex flex-col items-start justify-start border-2 ${getBorderColorClass(proposal.state, proposal.derivedStatus)} transition-all duration-300 ease-in-out hover:border-opacity-100 backdrop-blur-xl relative overflow-hidden group`}
+      style={{ background: 'rgba(0,0,0,0.5)' }}
+    >
+      <div className="absolute top-2 right-2">
+        {getStatusBadge(proposal.state, proposal.derivedStatus)}
+      </div>
+      
+      <h3 className="mb-2 text-lg text-white font-bold md:text-xl mt-4 pr-16">
+        {proposal.title}
+      </h3>
+      
+      <p className="mb-6 text-white/80 text-sm">
+        {truncateText(proposal.body, 100)}
+      </p>
+      
+      <div className="mt-auto w-full flex justify-between items-center">
+        <Link
+          href={`https://snapshot.org/#/ticketing-revolution.eth/proposal/${proposal.id}`}
+          target="_blank"
+          className="text-white hover:text-white/80 border-b border-white/40 pb-1 transition-all"
+        >
+          View on Snapshot
+        </Link>
+        
+        <button 
+          onClick={() => openModal(proposal)} 
+          className="text-white/70 hover:text-white transition-all"
+        >
+          Details
+        </button>
+      </div>
     </div>
   );
 };

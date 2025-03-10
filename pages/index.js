@@ -6,10 +6,6 @@ const links = [
   {
     name: 'Website',
     url: 'https://onopen.xyz/',
-    description: 'Learn more about building with OPEN ticket tooling',
-    color1: 'from-red-500',
-    color2: 'via-red-600',
-    color3: 'to-red-700',
   },
   {
     name: 'Hub',
@@ -47,31 +43,17 @@ const links = [
   { 
     name: 'Proposals', 
     url: '/proposals',
-    description: 'View and participate in governance proposals',
-    color1: 'from-green-500',
-    color2: 'via-green-600',
-    color3: 'to-green-700',
   }
 ]
 
 const communityLinks = [
   {
     name: 'Token Info',
-    url: '#',
-    description: 'Coming soon',
-    color1: 'from-purple-500',
-    color2: 'via-purple-600',
-    color3: 'to-purple-700',
-    disabled: true
+    url: '#'
   },
   {
     name: 'Dashboard',
-    url: '#',
-    description: 'Coming soon',
-    color1: 'from-blue-500',
-    color2: 'via-blue-600',
-    color3: 'to-blue-700',
-    disabled: true
+    url: '#'
   }
 ]
 
@@ -95,7 +77,8 @@ export default function Home() {
                 href={link.url}
                 target={link.url.startsWith('/') ? undefined : "_blank"}
                 rel={link.url.startsWith('/') ? undefined : "noopener noreferrer"}
-                className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 transition-all duration-300 ease-in-out hover:border-white/60 bg-black/40 transition-all duration-300 ease-in-out hover:backdrop-blur-xl backdrop-blur-xl relative h-24 overflow-hidden group"
+                className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 transition-all duration-300 ease-in-out hover:border-white/60 backdrop-blur-xl relative h-24 overflow-hidden group"
+                style={{ background: 'rgba(0,0,0,0.5)' }}
               >
                 <span className="open-font text-open uppercase text-xl font-bold text-white transition-transform duration-300 ease-in-out group-hover:scale-110 z-10">
                   {link.name}
@@ -113,7 +96,7 @@ export default function Home() {
               <div
                 key={index}
                 className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 backdrop-blur-md relative h-24 overflow-hidden"
-                style={{ background: 'rgba(0,0,0,0.3)' }}
+                style={{ background: 'rgba(0,0,0,0.5)' }}
               >
                 <div className="flex flex-col items-center z-10">
                   <span className="open-font text-open uppercase text-xl font-bold text-white/70">
