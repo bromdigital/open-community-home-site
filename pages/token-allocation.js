@@ -75,6 +75,14 @@ const getExplorerUrl = (address, chain) => {
   }
 };
 
+// Calculate percentages for token data
+const totalTokens = tokenData.datasets[0].data.reduce((acc, val) => acc + val, 0);
+tokenData.datasets[0].data.forEach((value, index) => {
+  const percentage = ((value / totalTokens) * 100).toFixed(2);
+  // Add percentage to the label
+  tokenData.labels[index] = `${tokenData.labels[index]} (${percentage}%)`;
+});
+
 export default function TokenAllocation() {
   const chartRef = useRef(null);
   
@@ -94,14 +102,26 @@ export default function TokenAllocation() {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 20,
+              bottom: 20,
+              left: 20,
+              right: 20
+            }
+          },
           plugins: {
             legend: {
-              position: 'bottom',
+              position: 'right',
+              align: 'start',
               labels: {
                 color: '#FFFFFF',
                 font: {
-                  size: 14
-                }
+                  size: 12
+                },
+                padding: 10,
+                usePointStyle: true,
+                pointStyle: 'circle'
               }
             },
             tooltip: {
@@ -109,12 +129,41 @@ export default function TokenAllocation() {
                 label: function(context) {
                   const labelIndex = context.dataIndex;
                   const value = context.dataset.data[labelIndex];
-                  // Format as number with commas
                   const formattedValue = new Intl.NumberFormat().format(value);
-                  return `${context.chart.data.labels[labelIndex]}: ${formattedValue}`;
+                  const percent = ((value / totalTokens) * 100).toFixed(2);
+                  return `${context.chart.data.labels[labelIndex]}: ${formattedValue} (${percent}%)`;
+                },
+                title: function(context) {
+                  return ''; // Remove title to save space
                 }
-              }
+              },
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              padding: 12,
+              bodyFont: {
+                size: 13
+              },
+              bodySpacing: 8,
+              boxWidth: 8
+            },
+            datalabels: {
+              display: false  // Don't show labels in the pie itself to avoid clutter
             }
+          },
+          elements: {
+            arc: {
+              borderWidth: 1,
+              borderColor: 'rgba(0, 0, 0, 0.2)',
+              hoverBorderColor: 'white',
+              hoverBorderWidth: 2
+            }
+          },
+          interaction: {
+            mode: 'nearest',
+            intersect: false
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true
           }
         }
       });
@@ -146,30 +195,41 @@ export default function TokenAllocation() {
         </h1>
         
         {/* Pie Chart Section */}
-        <div className="w-full max-w-3xl mb-12">
+        <div className="w-full max-w-4xl mb-12">
           <div className="bg-black/20 backdrop-blur-md p-6 rounded-lg border-2 border-white/20">
-            <h2 className="open-font text-white text-2xl uppercase mb-4">Distribution</h2>
-            <div className="relative h-80 w-full">
-              <canvas ref={chartRef} />
-            </div>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {tokenData.labels.map((label, index) => (
-                <div key={index} className="flex items-center justify-between p-2 border-b border-white/10">
-                  <div className="flex items-center">
-                    <div 
-                      className="w-4 h-4 mr-2" 
-                      style={{ backgroundColor: tokenData.datasets[0].backgroundColor[index] }}
-                    />
-                    <span className="text-white">{label}</span>
+            <h2 className="open-font text-white text-2xl uppercase mb-6">Distribution</h2>
+            <div className="flex flex-col sm:flex-row">
+              <div className="relative h-[350px] sm:h-[400px] w-full sm:w-3/5">
+                <canvas ref={chartRef} />
+              </div>
+              <div className="mt-6 sm:mt-0 sm:ml-6 sm:w-2/5">
+                <div className="grid grid-cols-1 gap-3">
+                  {tokenData.datasets[0].data.map((value, index) => {
+                    const originalLabel = tokenData.labels[index].split(' (')[0];
+                    const percentage = ((value / totalTokens) * 100).toFixed(2);
+                    return (
+                      <div key={index} className="flex items-center justify-between p-2 border-b border-white/10 hover:bg-white/5 transition-all rounded">
+                        <div className="flex items-center">
+                          <div 
+                            className="w-4 h-4 mr-2 rounded-sm" 
+                            style={{ backgroundColor: tokenData.datasets[0].backgroundColor[index] }}
+                          />
+                          <span className="text-white text-sm">{originalLabel}</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-white font-mono text-sm">
+                            {new Intl.NumberFormat().format(value)}
+                          </span>
+                          <span className="text-white/70 text-xs">{percentage}%</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="flex items-center justify-between p-2 border-b border-white/10 mt-2 bg-black/20 rounded font-bold">
+                    <span className="text-white">Total</span>
+                    <span className="text-white font-mono">{formattedTotal}</span>
                   </div>
-                  <span className="text-white font-mono">
-                    {new Intl.NumberFormat().format(tokenData.datasets[0].data[index])}
-                  </span>
                 </div>
-              ))}
-              <div className="flex items-center justify-between p-2 border-b border-white/10 col-span-full">
-                <span className="text-white font-bold">Total</span>
-                <span className="text-white font-mono font-bold">{formattedTotal}</span>
               </div>
             </div>
           </div>
