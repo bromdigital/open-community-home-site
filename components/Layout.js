@@ -25,9 +25,9 @@ const Layout = ({
       />
       
       <div className="fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute w-[50rem] h-[30rem] bg-pink-500/15 blur-[100px] rounded-full animate-move1" />
-        <div className="absolute w-[60rem] h-[35rem] bg-blue-500/15 blur-[120px] rounded-full animate-move2" />
-        <div className="absolute w-[55rem] h-[32rem] bg-purple-500/15 blur-[110px] rounded-full animate-move3" />
+        <div className="absolute w-[50rem] h-[30rem] bg-pink-500/30 blur-[100px] rounded-full animate-move1" />
+        <div className="absolute w-[60rem] h-[35rem] bg-blue-500/30 blur-[120px] rounded-full animate-move2" />
+        <div className="absolute w-[55rem] h-[32rem] bg-purple-500/30 blur-[110px] rounded-full animate-move3" />
       </div>
 
       <div className="fixed inset-0 backdrop-blur-[120px] z-10" />
