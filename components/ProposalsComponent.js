@@ -110,24 +110,6 @@ const ProposalsComponent = () => {
   };
 
   // Move these helper functions outside the main component
-  const getBorderColorClass = (state, derivedStatus) => {
-    // Use derived status if available, otherwise fall back to state
-    const status = derivedStatus || state;
-    
-    switch (status) {
-      case 'failed':
-        return 'border-red-500';
-      case 'active':
-        return 'border-yellow-500';
-      case 'pending':
-        return 'border-blue-500';
-      case 'passed':
-        return 'border-green-500';
-      default:
-        return 'border-white/40';
-    }
-  };
-
   const getStatusBadge = (state, derivedStatus) => {
     // Use derived status if available, otherwise fall back to state
     const status = derivedStatus || state;
@@ -191,6 +173,23 @@ const ProposalsComponent = () => {
 
   const { active, completed } = categorizeProposals(proposals);
 
+  const getVoteOutcome = (proposal) => {
+    if (!proposal.scores || proposal.scores.length === 0) {
+      return 'No votes';
+    }
+
+    const maxScore = Math.max(...proposal.scores);
+    if (maxScore === 0) {
+      return 'No votes';
+    }
+
+    const winningIndex = proposal.scores.indexOf(maxScore);
+    const winningChoice = proposal.choices[winningIndex];
+    const percentage = (maxScore / proposal.scores_total) * 100;
+
+    return `${winningChoice} (${percentage.toFixed(1)}%)`;
+  };
+
   return (
     <div className="w-full mt-6 sm:mt-10">
       <h1 className='open-font text-white text-3xl sm:text-5xl uppercase mb-4 sm:mb-8'>
@@ -207,14 +206,22 @@ const ProposalsComponent = () => {
                 key={index} 
                 proposal={proposal} 
                 openModal={openModal}
-                getBorderColorClass={getBorderColorClass}
-                getStatusBadge={getStatusBadge}
+                getVoteOutcome={getVoteOutcome}
                 truncateText={truncateText}
               />
             ))
           ) : (
-            <div className="col-span-full text-center text-white/80">
-              No active proposals at the moment
+            <div className="col-span-full text-center">
+              <div className="text-white/80 mb-4">
+                No active proposals at the moment
+              </div>
+              <Link
+                href="https://discord.gg/5zDK5FvP"
+                target="_blank"
+                className="px-6 py-2 border border-white/40 text-white hover:bg-opngreen/10 transition-all duration-300 rounded-lg"
+              >
+                Start a Discussion on Discord
+              </Link>
             </div>
           )}
         </div>
@@ -229,8 +236,7 @@ const ProposalsComponent = () => {
               key={index} 
               proposal={proposal} 
               openModal={openModal}
-              getBorderColorClass={getBorderColorClass}
-              getStatusBadge={getStatusBadge}
+              getVoteOutcome={getVoteOutcome}
               truncateText={truncateText}
             />
           ))}
@@ -240,17 +246,18 @@ const ProposalsComponent = () => {
       {/* Create Proposal Tile */}
       <div className="mt-12">
         <div 
-          className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 transition-all duration-300 ease-in-out hover:border-white/60 backdrop-blur-xl relative h-full overflow-hidden group"
-          style={{ background: 'rgba(0,0,0,0.5)' }}
+          className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 backdrop-blur-xl relative overflow-visible group"
+          style={{ background: 'rgba(0,0,0,0.3)' }}
         >
-          <h3 className="mb-4 text-xl text-white font-bold">Create Proposal</h3>
-          <p className="mb-6 text-white/80 text-center">
+          <div className="absolute inset-[-4px] rounded-lg backdrop-hue-rotate-0 group-hover:backdrop-hue-rotate-60 transition-all duration-300 z-0" />
+          <h3 className="mb-4 text-xl text-white font-bold z-10">Create Proposal</h3>
+          <p className="mb-6 text-white/80 text-center z-10">
             Start by discussing your proposal on our Discord community
           </p>
           <Link
             href="https://discord.gg/5zDK5FvP"
             target="_blank"
-            className="mt-auto px-6 py-2 border border-white/40 hover:border-white text-white hover:bg-white/10 transition-all duration-300 rounded-lg"
+            className="px-6 py-2 border border-white/40 text-white hover:bg-opngreen/10 transition-all duration-300 rounded-lg z-10"
           >
             Join Discord Discussion
           </Link>
@@ -260,7 +267,7 @@ const ProposalsComponent = () => {
       {/* Modal for proposal details */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50" onClick={closeModal}>
-          <div className={`bg-black/90 border-2 ${getBorderColorClass(currentProposal.state, currentProposal.derivedStatus)} p-8 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto`} onClick={e => e.stopPropagation()}>
+          <div className={`bg-black/90 border-2 ${getStatusBadge(currentProposal.state, currentProposal.derivedStatus)} p-8 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto`} onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-white">{currentProposal.title}</h3>
               {getStatusBadge(currentProposal.state, currentProposal.derivedStatus)}
@@ -323,46 +330,49 @@ const ProposalsComponent = () => {
   );
 };
 
-// ProposalCard component can now access these functions
 const ProposalCard = ({ 
   proposal, 
   openModal, 
-  getBorderColorClass, 
-  getStatusBadge,
+  getVoteOutcome,
   truncateText 
 }) => {
   return (
     <div 
-      className={`rounded-lg p-6 flex flex-col items-start justify-start border-2 ${getBorderColorClass(proposal.state, proposal.derivedStatus)} transition-all duration-300 ease-in-out hover:border-opacity-100 backdrop-blur-xl relative overflow-hidden group`}
-      style={{ background: 'rgba(0,0,0,0.5)' }}
+      className="rounded-lg p-6 flex flex-col items-start justify-start border-2 border-white/40 backdrop-blur-xl relative overflow-visible group"
+      style={{ background: 'rgba(0,0,0,0.3)' }}
     >
-      <div className="absolute top-2 right-2">
-        {getStatusBadge(proposal.state, proposal.derivedStatus)}
-      </div>
+      {/* Glow effect */}
+      <div className="absolute inset-[-4px] rounded-lg backdrop-hue-rotate-0 group-hover:backdrop-hue-rotate-60 transition-all duration-300 z-0" />
       
-      <h3 className="mb-2 text-lg text-white font-bold md:text-xl mt-4 pr-16">
+      <h3 className="mb-2 text-lg text-white font-bold md:text-xl mt-4 z-10">
         {proposal.title}
       </h3>
       
-      <p className="mb-6 text-white/80 text-sm">
+      <p className="mb-6 text-white/80 text-sm z-10">
         {truncateText(proposal.body, 100)}
       </p>
       
-      <div className="mt-auto w-full flex justify-between items-center">
-        <Link
-          href={`https://snapshot.org/#/ticketing-revolution.eth/proposal/${proposal.id}`}
-          target="_blank"
-          className="text-white hover:text-white/80 border-b border-white/40 pb-1 transition-all"
-        >
-          View on Snapshot
-        </Link>
-        
-        <button 
-          onClick={() => openModal(proposal)} 
-          className="text-white/70 hover:text-white transition-all"
-        >
-          Details
-        </button>
+      {/* Vote outcome display */}
+      <div className="mt-auto w-full flex flex-col gap-2 z-10">
+        <div className="text-white/80 text-sm">
+          Outcome: {getVoteOutcome(proposal)}
+        </div>
+        <div className="w-full flex justify-between items-center">
+          <Link
+            href={`https://snapshot.org/#/ticketing-revolution.eth/proposal/${proposal.id}`}
+            target="_blank"
+            className="text-white hover:text-white/80 border-b border-white/40 pb-1 transition-all"
+          >
+            View on Snapshot
+          </Link>
+          
+          <button 
+            onClick={() => openModal(proposal)} 
+            className="text-white/70 hover:text-white transition-all"
+          >
+            Details
+          </button>
+        </div>
       </div>
     </div>
   );

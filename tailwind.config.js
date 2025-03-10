@@ -44,6 +44,9 @@ module.exports = {
         opngreen: "#B8EC0C",
         opnpurple: "#C28BE1",
       },
+      hueRotate: {
+        60: '60deg',
+      }
     },
   },
   plugins: [],
