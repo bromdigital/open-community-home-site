@@ -87,14 +87,16 @@ export default function Home() {
       canonicalUrl="/"
     >
       <main className="flex w-full flex-1 flex-col items-center justify-center px-4 sm:px-8 md:px-20 py-8 text-center max-w-6xl mx-auto">
-        <img src="/logo.png" alt="Logo" className="mb-6 sm:mb-10 max-h-16 sm:max-h-20" />
+        <a href="/" className="block mb-6 sm:mb-10">
+          <img src="/logo.png" alt="Logo" className="max-h-16 sm:max-h-20 transition-transform duration-300 hover:scale-105" />
+        </a>
         
         {/* Hero Slider */}
         <div className="w-full mb-12 rounded-lg overflow-hidden border-2 border-white/20">
           <Slider {...sliderSettings} className="hero-slider">
             {/* Slide 1 */}
             <div className="relative">
-              <div className="relative h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-r from-black/40 to-black/40">
+              <div className="relative h-[250px] md:h-[350px] lg:h-[450px] bg-gradient-to-r from-black/40 to-black/40">
                 <div 
                   className="absolute inset-0 z-0 bg-cover bg-center"
                   style={{ 
@@ -102,11 +104,11 @@ export default function Home() {
                     filter: "brightness(0.6)"
                   }}
                 ></div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-8 z-10">
-                  <h2 className="open-font text-white text-3xl md:text-5xl uppercase mb-4 tracking-wider max-w-2xl text-center">
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-4 md:px-8 z-10">
+                  <h2 className="open-font text-white text-2xl md:text-4xl lg:text-5xl uppercase mb-3 md:mb-4 tracking-wider max-w-2xl text-center">
                     Revolutionize <span className="text-opngreen">Ticketing</span> With Blockchain
                   </h2>
-                  <p className="text-white/80 text-lg md:text-xl mb-8 max-w-lg text-center">
+                  <p className="text-white/80 text-sm md:text-lg lg:text-xl mb-5 md:mb-8 max-w-lg text-center">
                     Join our mission to empower creators and fans through web3 innovations
                   </p>
                   <div className="relative overflow-hidden inline-block group">
@@ -114,7 +116,7 @@ export default function Home() {
                       href="https://onopen.xyz/portal"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-opngreen text-black px-8 py-3 rounded-md text-xl uppercase font-bold tracking-wider inline-block transition-transform duration-300 group-hover:scale-110 relative z-10"
+                      className="bg-opngreen text-black px-6 md:px-8 py-2 md:py-3 rounded-md text-base md:text-xl uppercase font-bold tracking-wider inline-block transition-transform duration-300 group-hover:scale-110 relative z-10"
                     >
                       Get Started
                     </a>

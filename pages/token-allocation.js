@@ -188,7 +188,9 @@ export default function TokenAllocation() {
       canonicalUrl="/token-allocation"
     >
       <main className="flex w-full flex-1 flex-col items-center justify-center px-4 sm:px-8 md:px-20 py-8 text-center max-w-6xl mx-auto">
-        <img src="/logo.png" alt="Logo" className="mb-6 sm:mb-10 max-h-16 sm:max-h-20" />
+        <a href="/" className="block mb-6 sm:mb-10">
+          <img src="/logo.png" alt="Logo" className="max-h-16 sm:max-h-20 transition-transform duration-300 hover:scale-105" />
+        </a>
         
         <div className="w-full text-center mb-8">
           <h1 className="open-font text-white text-3xl sm:text-5xl uppercase mb-4">
