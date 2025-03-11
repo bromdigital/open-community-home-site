@@ -64,3 +64,64 @@ body {
 }
 
 /* Removing blob animations since they're no longer used */
+
+/* Hero Slider Styles */
+.hero-slider .slick-dots {
+  bottom: 20px;
+}
+
+.hero-slider .slick-dots li button:before {
+  color: white;
+  opacity: 0.5;
+  font-size: 12px;
+}
+
+.hero-slider .slick-dots li.slick-active button:before {
+  color: var(--opngreen, #B8EC0C);
+  opacity: 1;
+}
+
+.hero-slider .slick-prev, 
+.hero-slider .slick-next {
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+}
+
+.hero-slider .slick-prev {
+  left: 15px;
+}
+
+.hero-slider .slick-next {
+  right: 15px;
+}
+
+.hero-slider .slick-prev:before, 
+.hero-slider .slick-next:before {
+  font-size: 40px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.hero-slider .slick-prev:hover:before, 
+.hero-slider .slick-next:hover:before {
+  opacity: 1;
+  color: var(--opngreen, #B8EC0C);
+}
+
+/* CTA Button Animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(184, 236, 12, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(184, 236, 12, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(184, 236, 12, 0);
+  }
+}
+
+.hero-slider a {
+  animation: pulse 2s infinite;
+}

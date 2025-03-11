@@ -122,17 +122,7 @@ export default function TokenAllocation() {
           },
           plugins: {
             legend: {
-              position: 'right',
-              align: 'start',
-              labels: {
-                color: '#FFFFFF',
-                font: {
-                  size: 12
-                },
-                padding: 10,
-                usePointStyle: true,
-                pointStyle: 'circle'
-              }
+              display: false, // Hide the legend since we have the table
             },
             tooltip: {
               callbacks: {
@@ -236,11 +226,11 @@ export default function TokenAllocation() {
             <div className="w-full max-w-4xl mb-12">
               <div className="backdrop-blur-md p-6 rounded-lg border-2 border-white/20 bg-black/10">
                 <h2 className="open-font text-white text-2xl uppercase mb-6">Distribution</h2>
-                <div className="flex flex-col sm:flex-row">
-                  <div className="relative h-[350px] sm:h-[400px] w-full sm:w-3/5">
+                <div className="flex flex-col lg:flex-row">
+                  <div className="relative h-[350px] sm:h-[400px] w-full mb-6 lg:mb-0 lg:w-3/5">
                     <canvas ref={chartRef} />
                   </div>
-                  <div className="mt-6 sm:mt-0 sm:ml-6 sm:w-2/5">
+                  <div className="w-full lg:ml-6 lg:w-2/5">
                     <div className="grid grid-cols-1 gap-3">
                       {tokenData.datasets[0].data.map((value, index) => {
                         const originalLabel = tokenData.labels[index].split(' (')[0];

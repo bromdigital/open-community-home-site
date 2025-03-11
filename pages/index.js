@@ -2,6 +2,10 @@ import Head from 'next/head'
 import SEO from '../components/seo'; 
 import Layout from '../components/Layout';
 import { FiExternalLink } from 'react-icons/fi';
+import { useEffect } from 'react';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const aboutLinks = [
   {
@@ -64,6 +68,18 @@ const inDevelopmentLinks = [
 ]
 
 export default function Home() {
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    pauseOnHover: true,
+    arrows: true,
+  };
+
   return (
     <Layout
       title="OPEN Community - Engage in the Revolution"
@@ -72,6 +88,104 @@ export default function Home() {
     >
       <main className="flex w-full flex-1 flex-col items-center justify-center px-4 sm:px-8 md:px-20 py-8 text-center max-w-6xl mx-auto">
         <img src="/logo.png" alt="Logo" className="mb-6 sm:mb-10 max-h-16 sm:max-h-20" />
+        
+        {/* Hero Slider */}
+        <div className="w-full mb-12 rounded-lg overflow-hidden border-2 border-white/20">
+          <Slider {...sliderSettings} className="hero-slider">
+            {/* Slide 1 */}
+            <div className="relative">
+              <div className="relative h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-r from-black/40 to-black/40">
+                <div 
+                  className="absolute inset-0 z-0 bg-cover bg-center"
+                  style={{ 
+                    backgroundImage: "url('/blank-slide.jpg')",
+                    filter: "brightness(0.6)"
+                  }}
+                ></div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-8 z-10">
+                  <h2 className="open-font text-white text-3xl md:text-5xl uppercase mb-4 tracking-wider max-w-2xl text-center">
+                    Revolutionize <span className="text-opngreen">Ticketing</span> With Blockchain
+                  </h2>
+                  <p className="text-white/80 text-lg md:text-xl mb-8 max-w-lg text-center">
+                    Join our mission to empower creators and fans through web3 innovations
+                  </p>
+                  <div className="relative overflow-hidden inline-block group">
+                    <a 
+                      href="https://onopen.xyz/portal"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-opngreen text-black px-8 py-3 rounded-md text-xl uppercase font-bold tracking-wider inline-block transition-transform duration-300 group-hover:scale-110 relative z-10"
+                    >
+                      Get Started
+                    </a>
+                    <div className="absolute inset-0 bg-opnpurple rounded-md transform scale-0 group-hover:scale-100 transition-transform duration-300 z-0"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Slide 2 */}
+            <div className="relative">
+              <div className="relative h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-r from-black/40 to-black/40">
+                <div 
+                  className="absolute inset-0 z-0 bg-cover bg-center"
+                  style={{ 
+                    backgroundImage: "url('/blank-slide.jpg')",
+                    filter: "brightness(0.6)"
+                  }}
+                ></div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-8 z-10">
+                  <h2 className="open-font text-white text-3xl md:text-5xl uppercase mb-4 tracking-wider max-w-2xl text-center">
+                    Join the <span className="text-opnpurple">DAO</span> Community
+                  </h2>
+                  <p className="text-white/80 text-lg md:text-xl mb-8 max-w-lg text-center">
+                    Vote on proposals and help shape the future of decentralized ticketing
+                  </p>
+                  <div className="relative overflow-hidden inline-block group">
+                    <a 
+                      href="/proposals"
+                      className="bg-opnpurple text-white px-8 py-3 rounded-md text-xl uppercase font-bold tracking-wider inline-block transition-transform duration-300 group-hover:scale-110 relative z-10"
+                    >
+                      View Proposals
+                    </a>
+                    <div className="absolute inset-0 bg-opngreen rounded-md transform scale-0 group-hover:scale-100 transition-transform duration-300 z-0"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Slide 3 */}
+            <div className="relative">
+              <div className="relative h-[300px] md:h-[400px] lg:h-[500px] bg-gradient-to-r from-black/40 to-black/40">
+                <div 
+                  className="absolute inset-0 z-0 bg-cover bg-center"
+                  style={{ 
+                    backgroundImage: "url('/blank-slide.jpg')",
+                    filter: "brightness(0.6)"
+                  }}
+                ></div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-8 z-10">
+                  <h2 className="open-font text-white text-3xl md:text-5xl uppercase mb-4 tracking-wider max-w-2xl text-center">
+                    Explore <span className="text-open">Token</span> Economics
+                  </h2>
+                  <p className="text-white/80 text-lg md:text-xl mb-8 max-w-lg text-center">
+                    Discover how our token allocation distributes value across the ecosystem
+                  </p>
+                  <div className="relative overflow-hidden inline-block group">
+                    <a 
+                      href="/token-allocation"
+                      className="bg-white text-black px-8 py-3 rounded-md text-xl uppercase font-bold tracking-wider inline-block transition-transform duration-300 group-hover:scale-110 relative z-10"
+                    >
+                      View Allocation
+                    </a>
+                    <div className="absolute inset-0 bg-open rounded-md transform scale-0 group-hover:scale-100 transition-transform duration-300 z-0"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Slider>
+        </div>
+        
         <div className="w-full mt-6 sm:mt-10">
           {/* About OPEN Links */}
           <h1 className='open-font text-white text-3xl sm:text-5xl uppercase mb-4 sm:mb-8'>
