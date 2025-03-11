@@ -247,14 +247,14 @@ export default function TokenAllocation() {
                         const percentage = ((value / totalTokens) * 100).toFixed(2);
                         return (
                           <div key={index} className="flex items-center justify-between p-2 border-b border-white/10 hover:bg-white/5 transition-all rounded">
-                            <div className="flex items-center">
+                            <div className="flex items-center min-w-0 pr-2">
                               <div 
-                                className="w-4 h-4 mr-2 rounded-sm" 
+                                className="w-4 h-4 mr-2 flex-shrink-0 rounded-sm" 
                                 style={{ backgroundColor: tokenData.datasets[0].backgroundColor[index] }}
                               />
-                              <span className="text-white text-sm">{originalLabel}</span>
+                              <span className="text-white text-sm truncate">{originalLabel}</span>
                             </div>
-                            <div className="flex flex-col items-end">
+                            <div className="flex flex-col items-end flex-shrink-0">
                               <span className="text-white font-mono text-sm">
                                 {new Intl.NumberFormat().format(value)}
                               </span>

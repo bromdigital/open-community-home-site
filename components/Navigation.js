@@ -62,12 +62,12 @@ const Navigation = () => {
         <div className="absolute inset-0 overflow-hidden">
           <div className="h-full w-full flex flex-col items-center justify-center">
             
-            <nav className="flex flex-col items-center gap-10 p-8">
+            <nav className="flex flex-col items-center gap-10 p-8 w-full max-w-md">
               {routes.map((route) => (
                 <Link
                   key={route.path}
                   href={route.path}
-                  className={`text-4xl md:text-5xl open-font uppercase font-bold tracking-wider transition-all duration-300 ${
+                  className={`text-4xl md:text-5xl open-font uppercase font-bold tracking-wider transition-all duration-300 text-center w-full ${
                     router.pathname === route.path
                       ? 'text-white scale-110'
                       : 'text-white/70 hover:text-white hover:scale-110'
