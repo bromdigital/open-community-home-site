@@ -12,16 +12,17 @@ const Navigation = () => {
             </span>
           </Link>
 
-          {/* <nav>
-            <Link
-              href="https://onopen.xyz/portal"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white/10 backdrop-blur-lg border border-white/20 text-white px-6 py-2.5 rounded-full text-base font-bold tracking-wider inline-flex items-center gap-2 transition-all duration-300 hover:bg-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
-            >
-              Enter Portal
+          <nav className="flex items-center gap-6">
+            <Link href="/" className="text-zinc-300 hover:text-white transition-colors duration-300 font-medium">
+                Home
             </Link>
-          </nav> */}
+            <Link href="/proposals" className="text-zinc-300 hover:text-white transition-colors duration-300 font-medium">
+                Proposals
+            </Link>
+            <Link href="/tokenomics" className="text-zinc-300 hover:text-white transition-colors duration-300 font-medium">
+                Tokenomics
+            </Link>
+          </nav>
         </div>
       </div>
     </header>

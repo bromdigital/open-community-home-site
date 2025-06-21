@@ -16,9 +16,9 @@ export default function Home() {
       description="The official community hub for the OPEN Ticketing Revolution. Find resources, developer tools, news, and get involved with the mission to bring ticketing onchain."
       canonicalUrl="/"
     >
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-4 sm:px-8 md:px-20 py-8 text-center max-w-7xl mx-auto">
+      <main className="flex w-full flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8 text-center max-w-7xl mx-auto">
         {/* Hero Section */}
-        <div className="w-full text-center py-24 md:py-40">
+        <div className="w-full text-center py-20 md:py-28">
           <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-opnpurple via-opngreen to-white">
             {siteData.main.title}
           </h1>
@@ -34,7 +34,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="w-full mt-16 space-y-24">
+        <div className="w-full mt-16 space-y-20">
           
           {/* Education Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -45,7 +45,7 @@ export default function Home() {
 
           {/* About Section */}
           {siteData.about && (
-            <div className="text-left bg-zinc-900/50 p-10 rounded-2xl border border-white/10">
+            <div className="text-left bg-zinc-900/50 p-8 rounded-2xl border border-white/10">
               <h2 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-opngreen to-opngreen">
                 {siteData.about.title}
               </h2>
@@ -94,9 +94,7 @@ export default function Home() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {section.links.map((link, linkIndex) => (
-                   <div key={linkIndex} className={linkIndex % 3 === 1 ? 'md:translate-y-8' : ''}>
-                    <LinkCard link={link} />
-                  </div>
+                  <LinkCard key={linkIndex} link={link} />
                 ))}
               </div>
             </div>
