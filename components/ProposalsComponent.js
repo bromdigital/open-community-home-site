@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
-import CreateProposalTile from './CreateProposalCard';
+import ProposalCard from './ProposalCard';
+import { FiX } from 'react-icons/fi';
+import ReactMarkdown from 'react-markdown';
 
 const ProposalsComponent = () => {
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentProposal, setCurrentProposal] = useState({});
+  const [currentProposal, setCurrentProposal] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,41 +51,21 @@ const ProposalsComponent = () => {
         });
 
         if (response.data && response.data.data && response.data.data.proposals) {
-          // Process proposal data to determine if closed proposals passed or failed
           const processedProposals = response.data.data.proposals.map(proposal => {
-            // Add a derived status property that indicates pass/fail for closed proposals
             let derivedStatus = proposal.state;
-            
             if (proposal.state === 'closed') {
-              // Check if we have scores to determine if it passed or failed
               if (proposal.scores && proposal.scores.length > 0) {
-                // Find the highest score
                 const maxScore = Math.max(...proposal.scores);
-                const maxIndex = proposal.scores.indexOf(maxScore);
-                
-                // If the highest score is at index 0 and it's not 0, consider it as passed
-                // This assumes the first choice is usually "Yes" or "For" - adjust as needed
-                if (maxIndex === 0 && maxScore > 0) {
-                  derivedStatus = 'passed';
-                } else if (maxScore > 0) {
-                  derivedStatus = 'failed';
-                }
-                
-                // If all scores are 0, it's a failed proposal due to no participation
-                if (proposal.scores_total === 0 || maxScore === 0) {
+                if (maxScore > 0) {
+                  derivedStatus = proposal.scores.indexOf(maxScore) === 0 ? 'passed' : 'failed';
+                } else {
                   derivedStatus = 'failed';
                 }
               }
             }
-            
-            return {
-              ...proposal,
-              derivedStatus
-            };
+            return { ...proposal, derivedStatus };
           });
-          
           setProposals(processedProposals);
-          console.log("Proposals with derived status:", processedProposals);
         }
       } catch (error) {
         console.error("Error fetching proposals:", error);
@@ -95,13 +77,9 @@ const ProposalsComponent = () => {
     fetchData();
   }, []);
 
-  const truncateText = (text, length) => {
-    if (!text) return '';
-    return text.length > length ? text.substring(0, length) + "..." : text;
-  };
-
   const closeModal = () => {
     setModalOpen(false);
+    setCurrentProposal(null);
   };
 
   const openModal = (proposal) => {
@@ -109,118 +87,57 @@ const ProposalsComponent = () => {
     setModalOpen(true);
   };
 
-  // Move these helper functions outside the main component
-  const getStatusBadge = (state, derivedStatus) => {
-    // Use derived status if available, otherwise fall back to state
-    const status = derivedStatus || state;
-    
-    let bgColor = 'bg-white/10';
-    let textColor = 'text-white/70';
-    let label = status;
-
-    switch (status) {
-      case 'failed':
-        bgColor = 'bg-red-900/60';
-        textColor = 'text-red-200';
-        label = 'Failed';
-        break;
-      case 'closed':
-        bgColor = 'bg-gray-900/60';
-        textColor = 'text-gray-200';
-        label = 'Closed';
-        break;
-      case 'active':
-        bgColor = 'bg-yellow-700/60';
-        textColor = 'text-yellow-200';
-        label = 'Active';
-        break;
-      case 'pending':
-        bgColor = 'bg-blue-900/60';
-        textColor = 'text-blue-200';
-        label = 'Pending';
-        break;
-      case 'passed':
-        bgColor = 'bg-green-900/60';
-        textColor = 'text-green-200';
-        label = 'Passed';
-        break;
-      default:
-        break;
+  const getVoteOutcome = (proposal) => {
+    if (!proposal.scores || proposal.scores.length === 0 || proposal.scores_total === 0) {
+      return 'No votes yet';
     }
-
-    return (
-      <div className={`px-3 py-1.5 rounded-full ${bgColor} ${textColor} font-semibold text-xs uppercase tracking-wide`}>
-        {label}
-      </div>
-    );
+    const maxScore = Math.max(...proposal.scores);
+    const winningIndex = proposal.scores.indexOf(maxScore);
+    return `${proposal.choices[winningIndex]} (${((maxScore / proposal.scores_total) * 100).toFixed(1)}%)`;
   };
 
-  // Add this helper function to categorize proposals
-  const categorizeProposals = (proposals) => {
-    return {
-      active: proposals.filter(p => p.state === 'active'),
-      completed: proposals.filter(p => p.state !== 'active')
-    };
-  };
+  const categorizeProposals = (proposals) => ({
+    active: proposals.filter(p => p.state === 'active'),
+    completed: proposals.filter(p => p.state !== 'active')
+  });
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-white text-xl open-font">Loading proposals...</div>
+        <div className="text-white text-xl">Loading proposals...</div>
       </div>
     );
   }
 
   const { active, completed } = categorizeProposals(proposals);
 
-  const getVoteOutcome = (proposal) => {
-    if (!proposal.scores || proposal.scores.length === 0) {
-      return 'No votes';
-    }
-
-    const maxScore = Math.max(...proposal.scores);
-    if (maxScore === 0) {
-      return 'No votes';
-    }
-
-    const winningIndex = proposal.scores.indexOf(maxScore);
-    const winningChoice = proposal.choices[winningIndex];
-    const percentage = (maxScore / proposal.scores_total) * 100;
-
-    return `${winningChoice} (${percentage.toFixed(1)}%)`;
-  };
-
   return (
-    <div className="w-full mt-6 sm:mt-10">
-      <h1 className='open-font text-white text-3xl sm:text-5xl uppercase mb-4 sm:mb-8'>
-        DAO Proposals
-      </h1>
-      
+    <div className="w-full">
       {/* Active Proposals Section */}
-      <div className="mb-12">
-        <h2 className="text-white text-2xl sm:text-3xl mb-4">Active Proposals</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+      <div className="mb-16">
+        <h2 className="text-5xl font-bold mb-10 text-left bg-clip-text text-transparent bg-gradient-to-r from-white via-opngreen to-opngreen">
+          Active Proposals
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {active.length > 0 ? (
-            active.map((proposal, index) => (
+            active.map((proposal) => (
               <ProposalCard 
-                key={index} 
+                key={proposal.id} 
                 proposal={proposal} 
                 openModal={openModal}
                 getVoteOutcome={getVoteOutcome}
-                truncateText={truncateText}
               />
             ))
           ) : (
-            <div className="col-span-full text-center">
-              <div className="text-white/80 mb-4">
-                No active proposals at the moment
-              </div>
+            <div className="col-span-full text-center p-8 bg-white/5 rounded-xl border border-white/10">
+              <p className="text-zinc-300 mb-4">No active proposals right now.</p>
               <Link
-                href="https://discord.gg/5zDK5FvP"
+                href="https://snapshot.org/#/ticketing-revolution.eth"
                 target="_blank"
-                className="px-6 py-2 border border-white/40 text-white hover:bg-opngreen/10 transition-all duration-300 rounded-lg"
+                rel="noopener noreferrer"
+                className="group bg-white/10 backdrop-blur-lg border border-white/20 text-white px-6 py-2.5 rounded-full text-base font-bold tracking-wider inline-flex items-center gap-2 transition-all duration-300 hover:bg-white/20"
               >
-                Start a Discussion on Discord
+                Create a Proposal
               </Link>
             </div>
           )}
@@ -229,151 +146,38 @@ const ProposalsComponent = () => {
 
       {/* Completed Proposals Section */}
       <div>
-        <h2 className="text-white text-2xl sm:text-3xl mb-4">Completed Proposals</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-          {completed.map((proposal, index) => (
+        <h2 className="text-5xl font-bold mb-10 text-left bg-clip-text text-transparent bg-gradient-to-r from-white via-opngreen to-opngreen">
+          Completed Proposals
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {completed.map((proposal) => (
             <ProposalCard 
-              key={index} 
+              key={proposal.id} 
               proposal={proposal} 
               openModal={openModal}
               getVoteOutcome={getVoteOutcome}
-              truncateText={truncateText}
             />
           ))}
         </div>
       </div>
 
-      {/* Create Proposal Tile */}
-      <div className="mt-12">
-        <div 
-          className="rounded-lg p-6 flex flex-col items-center justify-center border-2 border-white/40 backdrop-blur-xl relative overflow-visible group"
-          style={{ background: 'rgba(0,0,0,0.3)' }}
-        >
-          <div className="absolute inset-[-4px] rounded-lg backdrop-hue-rotate-0 group-hover:backdrop-hue-rotate-60 transition-all duration-300 z-0" />
-          <h3 className="mb-4 text-xl text-white font-bold z-10">Create Proposal</h3>
-          <p className="mb-6 text-white/80 text-center z-10">
-            Start by discussing your proposal on our Discord community
-          </p>
-          <Link
-            href="https://discord.gg/5zDK5FvP"
-            target="_blank"
-            className="px-6 py-2 border border-white/40 text-white hover:bg-opngreen/10 transition-all duration-300 rounded-lg z-10"
+      {/* Proposal Modal */}
+      {modalOpen && currentProposal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={closeModal}>
+          <div 
+            className="bg-zinc-900/80 backdrop-blur-lg border border-white/10 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 relative"
+            onClick={(e) => e.stopPropagation()}
           >
-            Join Discord Discussion
-          </Link>
-        </div>
-      </div>
-
-      {/* Modal for proposal details */}
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50" onClick={closeModal}>
-          <div className={`bg-black/90 border-2 ${getStatusBadge(currentProposal.state, currentProposal.derivedStatus)} p-8 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto`} onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-bold text-white">{currentProposal.title}</h3>
-              {getStatusBadge(currentProposal.state, currentProposal.derivedStatus)}
-            </div>
-            
-            <div className="text-white/80 whitespace-pre-line mb-6">{currentProposal.body}</div>
-            
-            {/* Display voting choices and results if available */}
-            {currentProposal.choices && currentProposal.choices.length > 0 && (
-              <div className="mb-6">
-                <h4 className="text-white font-semibold mb-2">Voting Results:</h4>
-                <div className="space-y-2">
-                  {currentProposal.choices.map((choice, i) => {
-                    const score = currentProposal.scores?.[i] || 0;
-                    const totalScore = currentProposal.scores_total || 1; // Prevent division by zero
-                    const percentage = (score / totalScore) * 100 || 0;
-                    
-                    return (
-                      <div key={i} className="text-white/80">
-                        <div className="flex justify-between mb-1">
-                          <span>{choice}</span>
-                          <span>{score.toFixed(2)} ({percentage.toFixed(2)}%)</span>
-                        </div>
-                        <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-white/50" 
-                            style={{ width: `${percentage}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-            
-            <div className="mt-8 flex justify-between items-center">
-              <span className="text-white/60">
-                ID: <span className="text-white/80">{currentProposal.id?.substring(0, 8)}...</span>
-              </span>
-              
-              <div className="flex gap-4">
-                <button onClick={closeModal} className="text-white/80 hover:text-white">
-                  Close
-                </button>
-                
-                <Link
-                  href={`https://snapshot.org/#/ticketing-revolution.eth/proposal/${currentProposal.id}`}
-                  target="_blank"
-                  className="text-white hover:text-white/80 border-b border-white/40 pb-1"
-                >
-                  View on Snapshot
-                </Link>
-              </div>
+            <button onClick={closeModal} className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors">
+              <FiX size={24} />
+            </button>
+            <h2 className="text-3xl font-bold text-white mb-4">{currentProposal.title}</h2>
+            <div className="prose prose-invert prose-p:text-zinc-300 max-w-none">
+                <ReactMarkdown>{currentProposal.body}</ReactMarkdown>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-const ProposalCard = ({ 
-  proposal, 
-  openModal, 
-  getVoteOutcome,
-  truncateText 
-}) => {
-  return (
-    <div 
-      className="rounded-lg p-6 flex flex-col items-start justify-start border-2 border-white/40 backdrop-blur-xl relative overflow-visible group"
-      style={{ background: 'rgba(0,0,0,0.3)' }}
-    >
-      {/* Glow effect */}
-      <div className="absolute inset-[-4px] rounded-lg backdrop-hue-rotate-0 group-hover:backdrop-hue-rotate-60 transition-all duration-300 z-0" />
-      
-      <h3 className="mb-2 text-lg text-white font-bold md:text-xl mt-4 z-10">
-        {proposal.title}
-      </h3>
-      
-      <p className="mb-6 text-white/80 text-sm z-10">
-        {truncateText(proposal.body, 100)}
-      </p>
-      
-      {/* Vote outcome display */}
-      <div className="mt-auto w-full flex flex-col gap-2 z-10">
-        <div className="text-white/80 text-sm">
-          Outcome: {getVoteOutcome(proposal)}
-        </div>
-        <div className="w-full flex justify-between items-center">
-          <Link
-            href={`https://snapshot.org/#/ticketing-revolution.eth/proposal/${proposal.id}`}
-            target="_blank"
-            className="text-white hover:text-white/80 border-b border-white/40 pb-1 transition-all"
-          >
-            View on Snapshot
-          </Link>
-          
-          <button 
-            onClick={() => openModal(proposal)} 
-            className="text-white/70 hover:text-white transition-all"
-          >
-            Details
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
